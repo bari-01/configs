@@ -220,6 +220,7 @@ set showmatch
 set ignorecase
 set smartcase
 set hlsearch
+set nomodeline
 
 set incsearch
 set foldenable
