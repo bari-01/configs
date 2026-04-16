@@ -1,3 +1,6 @@
+let mapleader="\\"
+let maplocalleader=","
+
 call plug#begin()
 " The default plugin directory will be as follows:
 "   - Vim (Linux/macOS): '~/.vim/plugged'
@@ -11,12 +14,21 @@ call plug#begin()
 
 Plug 'preservim/nerdtree'
 Plug 'ycm-core/YouCompleteMe'
+"Plug 'gergap/vim-ollama'
 Plug 'lervag/vimtex'
 Plug 'slint-ui/vim-slint'
+Plug 'wellle/context.vim'
+Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+Plug 'dedzago/latex-img-paste.vim'
+
+"Plug 'github/copilot.vim'
 "Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 "Plug 'vim-airline/vim-airline'
 "Plug 'prabirshrestha/vim-lsp'
 "Plug 'prabirshrestha/asyncomplete.vim'
+"
+" vimtex
+"
 let g:tex_flavor='latex'
 let g:vimtex_view_method='zathura'
 "" Or with a generic interface:
@@ -25,10 +37,47 @@ let g:vimtex_view_method='zathura'
 let g:vimtex_quickfix_mode=0
 set conceallevel=1
 let g:tex_conceal='abdmg'
-let maplocalleader = ","
+let g:vimtex_syntax_conceal = {
+\ 'spacing': 0,
+\}
 let g:vimtex_compiler_method = 'tectonic'
+let g:vimtex_compiler_tectonic = {
+        \ 'out_dir' : '',
+        \ 'hooks' : [],
+        \ 'options' : [
+        \   '--keep-logs',
+        \   '--synctex',
+        \   '-Z shell-escape',
+        \ ],
+        \}
 nnoremap <localleader>lc :w<cr>:VimtexCompileSS<cr>
 nnoremap <localleader>lv :VimtexView<cr>
+"autocmd FileType tex,latex nnoremap <silent> <leader>p :call mdip#LatexClipboardImage()<CR>
+" there are some defaults for image directory and image name, you can change them
+" let g:mdip_imgdir = 'img'
+"let g:mdip_imgname = 'images'
+"
+function! PasteImage()
+    " Check if clipboard has an image
+    let l:types = system('wl-paste --list-types')
+    if l:types =~ 'image/png'
+        " Generate file path
+        let l:file = 'img/img_' . strftime('%s') . '.png'
+        " Save clipboard image
+        call system("wl-paste -t image/png > " . shellescape(l:file))
+        " Insert LaTeX code
+        execute "normal! o\\begin{figure}"
+        execute "normal! o  \\centering"
+        execute "normal! o  \\includegraphics[width=0.8\\linewidth]{" . l:file . "}"
+        execute "normal! o  \\caption{}"
+        execute "normal! o  \\label{fig:}"
+        execute "normal! o\\end{figure}"
+    else
+        echo "No image in clipboard"
+    endif
+endfunction
+
+nnoremap <leader>p :call PasteImage()<CR>
 
 Plug 'sirver/ultisnips'
 let g:UltiSnipsExpandTrigger = '<f2>'
@@ -57,6 +106,13 @@ let g:ycm_language_server = [
     \   'filetypes': ['slint'],
     \   'cmdline': ['slint-lsp'],
     \   'project_root_files': ['.git'],
+    \   'initialization_options': {},
+    \ },
+    \ {
+    \   'name': 'texlab',
+    \   'filetypes': ['tex', 'bib'],
+    \   'cmdline': ['texlab'],
+    \   'project_root_files': ['main.tex', '.git'],
     \   'initialization_options': {},
     \ }
 \ ]
@@ -136,23 +192,34 @@ let g:ycm_language_server = [
 "
 "autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 
-colorscheme habamax
+colorscheme catppuccin_macchiato
 "let g:lightline = {'colorscheme': 'catppuccin_frappe'}
 "let g:airline_theme = 'catppuccin_mocha'
 syntax enable
+se termguicolors
+set shell=/bin/zsh
 
-set tabstop=4
-set softtabstop=4
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
 set expandtab
 set encoding=utf8
+se cinoptions=l1
+set completeopt=menu,menuone,noselect
 
 set number
 set cursorline
 set mouse=a
 filetype indent on
 set wildmenu
+set wildoptions=pum
+set wildmode=longest:full,full
+set wildignorecase
 set lazyredraw
 set showmatch
+set ignorecase
+set smartcase
+set hlsearch
 
 set incsearch
 set foldenable
@@ -160,15 +227,24 @@ set foldlevelstart=10
 nnoremap <space> za
 set foldmethod=syntax
 
+"" Disable background color and enable underline for errors
+highlight YcmErrorSection guibg=#ffffff
+highlight YcmErrorLine guibg=#000000
+
+" Disable background color and enable underline for warnings
+highlight YcmWarningSection ctermbg=NONE guibg=NONE
+"highlight YcmWarningLine ctermbg=NONE guibg=NONE
+
+
 nnoremap j gj
 nnoremap k gk
 nnoremap <Up> gk
 nnoremap <Down> gj
 
-nnoremap <C-Up> <C-w>k
-nnoremap <C-Down> <C-w>j
-nnoremap <C-Left> <C-w>h
-nnoremap <C-Right> <C-w>l
+nnoremap <C-k> <C-w>k
+nnoremap <C-j> <C-w>j
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
 
 nnoremap <leader>t :tabnew<CR>
 nnoremap <leader>Left :tabp<CR>
@@ -203,10 +279,38 @@ autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_
 " Open the existing NERDTree on each new tab.
 autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
 
+
+let NERDTreeShowHidden=1
+
+let g:bottom_term_buf = -1
+
+function! ToggleBottomTerminal()
+  if bufexists(g:bottom_term_buf)
+    if bufwinnr(g:bottom_term_buf) != -1
+      execute bufwinnr(g:bottom_term_buf) . 'hide'
+      return
+    endif
+
+    belowright 8split
+    execute 'buffer ' . g:bottom_term_buf
+    call feedkeys("i")
+    return
+  endif
+
+  belowright 8split
+  term ++curwin
+  let g:bottom_term_buf = bufnr('%')
+  "startinsert
+endfunction
+
+nnoremap <leader>tt :call ToggleBottomTerminal()<CR>
+tnoremap <leader>tt <C-\><C-n>:call ToggleBottomTerminal()<CR>
+
 set backup
 set backupdir=~/.vim-tmp
 "set backupskip=/tmp/*,/private/tmp/*
 set directory=~/.vim-tmp
 set writebackup
 
-
+set undofile
+set undodir=~/.vim-tmp/undo
