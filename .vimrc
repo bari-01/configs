@@ -117,32 +117,6 @@ let g:ycm_language_server = [
     \ }
 \ ]
 
-" let g:ycm_language_server = [
-"     \ {
-"     \ 'name': 'rust',
-"     \ 'filetypes': ['rust'],
-"     \ 'cmdline': ['rust-analyzer'],
-"     \ 'whitelist': ['rust'],
-"     \ 'initialization_options': {},
-"     \ },
-"     \ {
-"     \ 'name': 'rust',
-"     \ 'filetypes': ['rust'],
-"     \ 'cmdline': ['rust-analyzer'],
-"     \ 'whitelist': ['rust'],
-"     \ 'initialization_options': {},
-"     \ },
-" 
-"     {
-"       "languageserver": {
-"         "slint": {
-"           "command": "slint-lsp",
-"           "filetypes": ["slint"]
-"         }
-"       }
-"     }
-" \ ]
-
 "if executable('rust-analyzer')
 "    au User lsp_setup call lsp#register_server({
 "        \ 'name': 'rust-analyzer',
@@ -212,7 +186,7 @@ set cursorline
 set mouse=a
 filetype indent on
 set wildmenu
-set wildoptions=pum
+set wildoptions=pum,fuzzy
 set wildmode=longest:full,full
 set wildignorecase
 set lazyredraw
@@ -227,15 +201,6 @@ set foldenable
 set foldlevelstart=10
 nnoremap <space> za
 set foldmethod=syntax
-
-"" Disable background color and enable underline for errors
-highlight YcmErrorSection guibg=#ffffff
-highlight YcmErrorLine guibg=#000000
-
-" Disable background color and enable underline for warnings
-highlight YcmWarningSection ctermbg=NONE guibg=NONE
-"highlight YcmWarningLine ctermbg=NONE guibg=NONE
-
 
 nnoremap j gj
 nnoremap k gk
@@ -264,8 +229,14 @@ nnoremap <leader>jt :YcmCompleter GetType<CR>
 nnoremap <leader>jo :YcmCompleter GetDoc<CR>
 nnoremap <leader>jx :YcmCompleter FixIt<CR>
 
-" Start NERDTree and put the cursor back in the other window.
-autocmd VimEnter * NERDTree | wincmd p
+" Start NERDTree at current dir and put the cursor back in the other window.
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter *
+  \ if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") |
+  \   execute 'NERDTree' argv()[0] |
+  \   wincmd p |
+  \   enew |
+  \ endif
 
 " Exit Vim if NERDTree is the only window remaining in the only tab.
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
@@ -282,6 +253,7 @@ autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
 
 
 let NERDTreeShowHidden=1
+let g:NERDTreeChDirMode = 2
 
 let g:bottom_term_buf = -1
 
