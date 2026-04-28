@@ -166,12 +166,12 @@ let g:ycm_language_server = [
 "
 "autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 
-colorscheme catppuccin_macchiato
 "let g:lightline = {'colorscheme': 'catppuccin_frappe'}
 "let g:airline_theme = 'catppuccin_mocha'
 syntax enable
 se termguicolors
 set shell=/bin/zsh
+colorscheme catppuccin_macchiato
 
 set tabstop=2
 set softtabstop=2
@@ -229,14 +229,18 @@ nnoremap <leader>jt :YcmCompleter GetType<CR>
 nnoremap <leader>jo :YcmCompleter GetDoc<CR>
 nnoremap <leader>jx :YcmCompleter FixIt<CR>
 
-" Start NERDTree at current dir and put the cursor back in the other window.
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter *
   \ if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") |
   \   execute 'NERDTree' argv()[0] |
   \   wincmd p |
   \   enew |
+  \ else |
+  \   NERDTree |
+  \   wincmd p |
   \ endif
+" Start NERDTree and put the cursor back in the other window.
+"autocmd VimEnter * NERDTree | wincmd p
 
 " Exit Vim if NERDTree is the only window remaining in the only tab.
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
