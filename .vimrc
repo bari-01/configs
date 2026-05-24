@@ -1,6 +1,8 @@
-let mapleader="\\"
-let maplocalleader=","
-
+"""""""""""""
+"  Plugins  "
+"""""""""""""
+" plugins
+""" vimplug
 call plug#begin()
 " The default plugin directory will be as follows:
 "   - Vim (Linux/macOS): '~/.vim/plugged'
@@ -12,6 +14,7 @@ call plug#begin()
 
 " Make sure you use single quotes
 
+"" common plugins
 Plug 'preservim/nerdtree'
 Plug 'ycm-core/YouCompleteMe'
 "Plug 'gergap/vim-ollama'
@@ -22,17 +25,18 @@ Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 Plug 'dedzago/latex-img-paste.vim'
 Plug 'cpiger/vim-qt'
 
+"" disabled plugins
 "Plug 'github/copilot.vim'
 "Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 "Plug 'vim-airline/vim-airline'
 "Plug 'prabirshrestha/vim-lsp'
 "Plug 'prabirshrestha/asyncomplete.vim'
-"
-" vimtex
-"
+
+"" vimtex
+""" settings
 let g:tex_flavor='latex'
 let g:vimtex_view_method='zathura'
-"" Or with a generic interface:
+" Or with a generic interface:
 "let g:vimtex_view_general_viewer = 'okular'
 "let g:vimtex_view_general_options = '--unique file:@pdf\#src:@line@tex'
 let g:vimtex_quickfix_mode=0
@@ -57,7 +61,8 @@ nnoremap <localleader>lv :VimtexView<cr>
 " there are some defaults for image directory and image name, you can change them
 " let g:mdip_imgdir = 'img'
 "let g:mdip_imgname = 'images'
-"
+
+""" latex image paste
 function! PasteImage()
     " Check if clipboard has an image
     let l:types = system('wl-paste --list-types')
@@ -80,6 +85,8 @@ endfunction
 
 nnoremap <leader>p :call PasteImage()<CR>
 
+"" snips
+""" settings
 Plug 'sirver/ultisnips'
 let g:UltiSnipsExpandTrigger = '<f2>'
 let g:UltiSnipsJumpForwardTrigger = '<f2>'
@@ -90,8 +97,76 @@ Plug 'honza/vim-snippets'
 " - Automatically executes `filetype plugin indent on` and `syntax enable`.
 call plug#end()
 
+"""""""""""""""""""""""
+"  Autofolding vimrc  "
+"""""""""""""""""""""""
+"" Autofolding .vimrc
+" see http://vimcasts.org/episodes/writing-a-custom-fold-expression/
+""" defines a foldlevel for each line of code
+function! VimFolds(lnum)
+  let s:thisline = getline(a:lnum)
+  if match(s:thisline, '^"" ') >= 0
+    return '>2'
+  endif
+  if match(s:thisline, '^""" ') >= 0
+    return '>3'
+  endif
+  let s:two_following_lines = 0
+  if line(a:lnum) + 2 <= line('$')
+    let s:line_1_after = getline(a:lnum+1)
+    let s:line_2_after = getline(a:lnum+2)
+    let s:two_following_lines = 1
+  endif
+  if !s:two_following_lines
+      return '='
+    endif
+  else
+    if (match(s:thisline, '^"""""') >= 0) &&
+       \ (match(s:line_1_after, '^"  ') >= 0) &&
+       \ (match(s:line_2_after, '^""""') >= 0)
+      return '>1'
+    else
+      return '='
+    endif
+  endif
+endfunction
+
+""" defines a foldtext
+function! VimFoldText()
+  " handle special case of normal comment first
+  let s:info = '('.string(v:foldend-v:foldstart).' l)'
+  if v:foldlevel == 1
+    let s:line = ' ◇ '.getline(v:foldstart+1)[3:-2]
+  elseif v:foldlevel == 2
+    let s:line = '   ●  '.getline(v:foldstart)[3:]
+  elseif v:foldlevel == 3
+    let s:line = '     ▪ '.getline(v:foldstart)[4:]
+  endif
+  if strwidth(s:line) > 80 - len(s:info) - 3
+    return s:line[:79-len(s:info)-3+len(s:line)-strwidth(s:line)].'...'.s:info
+  else
+    return s:line.repeat(' ', 80 - strwidth(s:line) - len(s:info)).s:info
+  endif
+endfunction
+
+""" set foldsettings automatically for vim files
+augroup fold_vimrc
+  autocmd!
+  autocmd FileType vim
+                   \ setlocal foldmethod=expr |
+                   \ setlocal foldexpr=VimFolds(v:lnum) |
+                   \ setlocal foldtext=VimFoldText() |
+                   \ setlocal foldlevel=0
+     "              \ set foldcolumn=2 foldminlines=2
+augroup END
+
+"""""""""
+"  YCM  "
+"""""""""
+""" settings
 let g:ycm_clangd_uses_ycmd_caching = 0
 let g:ycm_clangd_binary_path = exepath("clangd")
+"""  lsp
 let g:ycm_language_server = [
     \ {
     \   'name': 'rust',
@@ -120,6 +195,7 @@ let g:ycm_language_server = [
     \ }
 \ ]
 
+""" stuff commented out
 "if executable('rust-analyzer')
 "    au User lsp_setup call lsp#register_server({
 "        \ 'name': 'rust-analyzer',
@@ -161,8 +237,9 @@ let g:ycm_language_server = [
 "inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 "inoremap <expr> <cr>    pumvisible() ? asyncomplete#close_popup() : "\<cr>"
 "
-"" allow modifying the completeopt variable, or it will
-"" be overridden all the time
+""" more stuff
+" " allow modifying the completeopt variable, or it will
+" " be overridden all the time
 "let g:asyncomplete_auto_completeopt = 0
 "
 "set completeopt=menuone,noinsert,noselect,preview
@@ -171,8 +248,12 @@ let g:ycm_language_server = [
 
 "let g:lightline = {'colorscheme': 'catppuccin_frappe'}
 "let g:airline_theme = 'catppuccin_mocha'
+
+""""""""""""""""""""""
+"  General settings  "
+""""""""""""""""""""""
 syntax enable
-se termguicolors
+set termguicolors
 set shell=/bin/zsh
 colorscheme catppuccin_mocha
 
@@ -181,7 +262,7 @@ set softtabstop=4
 set shiftwidth=4
 set expandtab
 set encoding=utf8
-se cinoptions=l1
+set cinoptions=l1
 set completeopt=menu,menuone,noselect
 
 set number
@@ -205,6 +286,20 @@ set foldenable
 set foldlevelstart=10
 nnoremap <space> za
 set foldmethod=syntax
+set backup
+set backupdir=~/.vim-tmp
+set backupskip=/tmp/*,/private/tmp/*
+set directory=~/.vim-tmp
+set writebackup
+
+set undofile
+set undodir=~/.vim-tmp/undo
+
+""""""""""""""
+"  mappings  "
+""""""""""""""
+let mapleader="\\"
+let maplocalleader=","
 
 nnoremap j gj
 nnoremap k gk
@@ -216,6 +311,7 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
 
+" needed for c functions
 nnoremap s $i<CR><ESC>
 
 nnoremap <leader>t :tabnew<CR>
@@ -234,6 +330,10 @@ nnoremap <Leader>jj :lnext<CR>zz
 nnoremap <leader>jt :YcmCompleter GetType<CR>
 nnoremap <leader>jo :YcmCompleter GetDoc<CR>
 nnoremap <leader>jx :YcmCompleter FixIt<CR>
+
+""""""""""""""
+"  nerdtree  "
+""""""""""""""
 
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter *
@@ -265,6 +365,10 @@ autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
 let NERDTreeShowHidden=1
 let g:NERDTreeChDirMode = 2
 
+"""""""""""""""""""""
+"  bottom terminal  "
+"""""""""""""""""""""
+
 let g:bottom_term_buf = -1
 
 function! ToggleBottomTerminal()
@@ -289,11 +393,3 @@ endfunction
 nnoremap <leader>tt :call ToggleBottomTerminal()<CR>
 tnoremap <leader>tt <C-\><C-n>:call ToggleBottomTerminal()<CR>
 
-set backup
-set backupdir=~/.vim-tmp
-"set backupskip=/tmp/*,/private/tmp/*
-set directory=~/.vim-tmp
-set writebackup
-
-set undofile
-set undodir=~/.vim-tmp/undo
