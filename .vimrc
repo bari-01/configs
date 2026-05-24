@@ -20,6 +20,7 @@ Plug 'slint-ui/vim-slint'
 Plug 'wellle/context.vim'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 Plug 'dedzago/latex-img-paste.vim'
+Plug 'cpiger/vim-qt'
 
 "Plug 'github/copilot.vim'
 "Plug 'catppuccin/vim', { 'as': 'catppuccin' }
@@ -89,6 +90,8 @@ Plug 'honza/vim-snippets'
 " - Automatically executes `filetype plugin indent on` and `syntax enable`.
 call plug#end()
 
+let g:ycm_clangd_uses_ycmd_caching = 0
+let g:ycm_clangd_binary_path = exepath("clangd")
 let g:ycm_language_server = [
     \ {
     \   'name': 'rust',
@@ -171,11 +174,11 @@ let g:ycm_language_server = [
 syntax enable
 se termguicolors
 set shell=/bin/zsh
-colorscheme catppuccin_macchiato
+colorscheme catppuccin_mocha
 
-set tabstop=2
-set softtabstop=2
-set shiftwidth=2
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
 set expandtab
 set encoding=utf8
 se cinoptions=l1
@@ -195,6 +198,7 @@ set ignorecase
 set smartcase
 set hlsearch
 set nomodeline
+set colorcolumn=80
 
 set incsearch
 set foldenable
@@ -211,6 +215,8 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-j> <C-w>j
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
+
+nnoremap s $i<CR><ESC>
 
 nnoremap <leader>t :tabnew<CR>
 nnoremap <leader>Left :tabp<CR>
@@ -268,7 +274,7 @@ function! ToggleBottomTerminal()
       return
     endif
 
-    belowright 8split
+    belowright 12split
     execute 'buffer ' . g:bottom_term_buf
     call feedkeys("i")
     return
