@@ -15,7 +15,8 @@ call plug#begin()
 " Make sure you use single quotes
 
 "" common plugins
-Plug 'preservim/nerdtree'
+Plug 'preservim/nerdtree' |
+            \ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'ycm-core/YouCompleteMe'
 "Plug 'gergap/vim-ollama'
 Plug 'lervag/vimtex'
@@ -24,11 +25,13 @@ Plug 'wellle/context.vim'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 Plug 'dedzago/latex-img-paste.vim'
 Plug 'cpiger/vim-qt'
+Plug 'ryanoasis/vim-devicons'
+Plug 'https://tpope.io/vim/fugitive.git'
 
 "" disabled plugins
 "Plug 'github/copilot.vim'
-"Plug 'catppuccin/vim', { 'as': 'catppuccin' }
-"Plug 'vim-airline/vim-airline'
+Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+Plug 'vim-airline/vim-airline'
 "Plug 'prabirshrestha/vim-lsp'
 "Plug 'prabirshrestha/asyncomplete.vim'
 
@@ -166,6 +169,7 @@ augroup END
 """ settings
 let g:ycm_clangd_uses_ycmd_caching = 0
 let g:ycm_clangd_binary_path = exepath("clangd")
+"let g:ycm_clangd_args = [ 'project_root_files': ['Makefile', '.git'] ]
 """  lsp
 let g:ycm_language_server = [
     \ {
@@ -192,7 +196,14 @@ let g:ycm_language_server = [
     \   'cmdline': ['texlab'],
     \   'project_root_files': ['main.tex', '.git'],
     \   'initialization_options': {},
-    \ }
+    \ },
+    \ {
+    \   'name': 'slangd',
+    \   'filetypes' :['shaderslang'],
+    \   'cmdline': ['slangd'],
+    \   'project_root_files': ['.git'],
+    \   'initialization_options': {},
+    \ },
 \ ]
 
 """ stuff commented out
@@ -255,7 +266,8 @@ let g:ycm_language_server = [
 syntax enable
 set termguicolors
 set shell=/bin/zsh
-colorscheme catppuccin_mocha
+colorscheme peachpuff
+"set statusline+=%{FugitiveStatusline()}
 
 set tabstop=4
 set softtabstop=4
@@ -264,6 +276,7 @@ set expandtab
 set encoding=utf8
 set cinoptions=l1
 set completeopt=menu,menuone,noselect
+set encoding=UTF-8
 
 set number
 set cursorline
@@ -315,8 +328,8 @@ nnoremap <C-l> <C-w>l
 nnoremap s $i<CR><ESC>
 
 nnoremap <leader>t :tabnew<CR>
-nnoremap <leader>Left :tabp<CR>
-nnoremap <leader>Right :tabN<CR>
+nnoremap <leader>h :tabp<CR>
+nnoremap <leader>l :tabN<CR>
 nnoremap <leader>ev :vsp $MYVIMRC<CR>
 nnoremap <leader>ez :vsp ~/.zshrc<CR>
 nnoremap <leader>sv :source $MYVIMRC<CR>
@@ -335,24 +348,34 @@ nnoremap <leader>jx :YcmCompleter FixIt<CR>
 "  nerdtree  "
 """"""""""""""
 
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter *
-  \ if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") |
-  \   execute 'NERDTree' argv()[0] |
-  \   wincmd p |
-  \   enew |
-  \ else |
-  \   NERDTree |
-  \   wincmd p |
-  \ endif
+"autocmd StdinReadPre * let s:std_in=1
+"autocmd VimEnter *
+"  \ if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") |
+"  \   execute 'NERDTree' argv()[0] |
+"  \   wincmd p |
+"  \   enew |
+"  \ else |
+"  \   NERDTree |
+"  \   wincmd p |
+"  \ endif
 " Start NERDTree and put the cursor back in the other window.
-"autocmd VimEnter * NERDTree | wincmd p
+autocmd VimEnter * NERDTree | wincmd p
+
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in') |
+            \ execute 'NERDTree' argv()[0] | wincmd p | enew | execute 'cd '.argv()[0] | endif
 
 " Exit Vim if NERDTree is the only window remaining in the only tab.
-autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+"autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+" Exit Vim if NERDTree is the only window remaining in the only tab.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | call feedkeys(":quit\<CR>:\<BS>") | endif
 
 " Close the tab if NERDTree is the only window remaining in it.
-autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+"autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+" Close the tab if NERDTree is the only window remaining in it.
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | call feedkeys(":quit\<CR>:\<BS>") | endif
 
 " If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
 autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
@@ -378,13 +401,13 @@ function! ToggleBottomTerminal()
       return
     endif
 
-    belowright 12split
+    belowright 14split
     execute 'buffer ' . g:bottom_term_buf
     call feedkeys("i")
     return
   endif
 
-  belowright 8split
+  belowright 14split
   term ++curwin
   let g:bottom_term_buf = bufnr('%')
   "startinsert
@@ -392,4 +415,4 @@ endfunction
 
 nnoremap <leader>tt :call ToggleBottomTerminal()<CR>
 tnoremap <leader>tt <C-\><C-n>:call ToggleBottomTerminal()<CR>
-
+tnoremap jk <C-\><C-n>
