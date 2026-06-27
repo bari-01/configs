@@ -266,7 +266,7 @@ let g:ycm_language_server = [
 syntax enable
 set termguicolors
 set shell=/bin/zsh
-colorscheme peachpuff
+colorscheme habamax
 "set statusline+=%{FugitiveStatusline()}
 
 set tabstop=4
@@ -347,7 +347,7 @@ nnoremap <leader>jx :YcmCompleter FixIt<CR>
 """"""""""""""
 "  nerdtree  "
 """"""""""""""
-
+"" startup
 "autocmd StdinReadPre * let s:std_in=1
 "autocmd VimEnter *
 "  \ if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") |
@@ -359,12 +359,21 @@ nnoremap <leader>jx :YcmCompleter FixIt<CR>
 "  \   wincmd p |
 "  \ endif
 " Start NERDTree and put the cursor back in the other window.
-autocmd VimEnter * NERDTree | wincmd p
+"autocmd VimEnter * NERDTree | wincmd p
 
 autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in') |
-            \ execute 'NERDTree' argv()[0] | wincmd p | enew | execute 'cd '.argv()[0] | endif
+"autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in') |
+"            \ execute 'NERDTree' argv()[0] | wincmd p | enew | execute 'cd '.argv()[0] | endif
 
+" Start NERDTree. If a file is specified, move the cursor to its window.
+"autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * NERDTree | if argc() > 0 || exists("s:std_in") | wincmd p | endif
+
+" Start NERDTree when Vim is started without file arguments.
+"autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+
+"
 " Exit Vim if NERDTree is the only window remaining in the only tab.
 "autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 
@@ -384,7 +393,32 @@ autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_
 " Open the existing NERDTree on each new tab.
 autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
 
+"" auto resize
+function! SetNerdTreeWidth()
+  let l:width = max([15, float2nr(&columns * 0.15)])
+  let g:NERDTreeWinSize = l:width
+  " Resize existing NERDTree window if open
+  if exists("t:NERDTreeBufName")
+    let l:curwin = winnr()
 
+    for l:w in range(1, winnr('$'))
+      if getbufvar(winbufnr(l:w), '&filetype') ==# 'nerdtree'
+        execute l:w . 'wincmd w'
+        execute 'vertical resize ' . l:width
+        break
+      endif
+    endfor
+
+    execute l:curwin . 'wincmd w'
+  endif
+endfunction
+
+augroup NerdTreeResize
+  autocmd!
+  autocmd VimEnter,VimResized * call SetNerdTreeWidth()
+augroup END
+
+"" settings
 let NERDTreeShowHidden=1
 let g:NERDTreeChDirMode = 2
 
