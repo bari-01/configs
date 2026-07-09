@@ -18,25 +18,47 @@ call plug#begin()
 Plug 'preservim/nerdtree' |
             \ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'ycm-core/YouCompleteMe'
-"Plug 'gergap/vim-ollama'
 Plug 'lervag/vimtex'
 Plug 'slint-ui/vim-slint'
 Plug 'wellle/context.vim'
 Plug 'catppuccin/vim', { 'as': 'catppuccin' }
-Plug 'dedzago/latex-img-paste.vim'
 Plug 'cpiger/vim-qt'
 Plug 'ryanoasis/vim-devicons'
 Plug 'https://tpope.io/vim/fugitive.git'
+Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+Plug 'vim-airline/vim-airline'
+Plug 'preservim/tagbar'
+Plug 'airblade/vim-gitgutter'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'mbbill/undotree'
 
 "" disabled plugins
 "Plug 'github/copilot.vim'
-Plug 'catppuccin/vim', { 'as': 'catppuccin' }
-Plug 'vim-airline/vim-airline'
 "Plug 'prabirshrestha/vim-lsp'
 "Plug 'prabirshrestha/asyncomplete.vim'
+"Plug 'dedzago/latex-img-paste.vim'
+"Plug 'tpope/vim-surround'
+"Plug 'tpope/vim-repeat'
+"Plug 'tpope/vim-commentary'
+"Plug 'jiangmiao/auto-pairs'
 
-"" vimtex
+"" snips
+Plug 'sirver/ultisnips'
+Plug 'honza/vim-snippets'
 """ settings
+let g:UltiSnipsExpandTrigger = '<f2>'
+let g:UltiSnipsJumpForwardTrigger = '<f2>'
+let g:UltiSnipsJumpBackwardTrigger = '<f3>'
+
+" Initialize plugin system
+" - Automatically executes `filetype plugin indent on` and `syntax enable`.
+call plug#end()
+
+""""""""""""
+"  vimtex  "
+""""""""""""
+"" settings
 let g:tex_flavor='latex'
 let g:vimtex_view_method='zathura'
 " Or with a generic interface:
@@ -65,7 +87,7 @@ nnoremap <localleader>lv :VimtexView<cr>
 " let g:mdip_imgdir = 'img'
 "let g:mdip_imgname = 'images'
 
-""" latex image paste
+"" latex image paste
 function! PasteImage()
     " Check if clipboard has an image
     let l:types = system('wl-paste --list-types')
@@ -81,24 +103,23 @@ function! PasteImage()
         execute "normal! o  \\caption{}"
         execute "normal! o  \\label{fig:}"
         execute "normal! o\\end{figure}"
+        "let l:file = 'img/img_' . strftime('%s') . '.png'
+
+        "call append(line('.'), [
+        "    \ '\begin{figure}',
+        "    \ '\centering',
+        "    \ '\includegraphics[width=0.8\linewidth]{' . l:file . '}',
+        "    \ '\caption{}',
+        "    \ '\label{fig:}',
+        "    \ '\end{figure}'
+        "    \ ])
+
+        "" Reindent the inserted block
+        "execute (line('.')+1) . ',' . (line('.')+6) . 'normal! ='
     else
         echo "No image in clipboard"
     endif
 endfunction
-
-nnoremap <leader>p :call PasteImage()<CR>
-
-"" snips
-""" settings
-Plug 'sirver/ultisnips'
-let g:UltiSnipsExpandTrigger = '<f2>'
-let g:UltiSnipsJumpForwardTrigger = '<f2>'
-let g:UltiSnipsJumpBackwardTrigger = '<f3>'
-Plug 'honza/vim-snippets'
-
-" Initialize plugin system
-" - Automatically executes `filetype plugin indent on` and `syntax enable`.
-call plug#end()
 
 """""""""""""""""""""""
 "  Autofolding vimrc  "
@@ -319,14 +340,14 @@ nnoremap k gk
 nnoremap <Up> gk
 nnoremap <Down> gj
 
-nnoremap <C-k> <C-w>k
-nnoremap <C-j> <C-w>j
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
+nnoremap <leader>p :call PasteImage()<CR>
+nmap <F8> :TagbarToggle<CR>
+nnoremap <F5> :UndotreeToggle<CR>
 
 " needed for c functions
 nnoremap s $i<CR><ESC>
 
+"" tab management
 nnoremap <leader>t :tabnew<CR>
 nnoremap <leader>h :tabp<CR>
 nnoremap <leader>l :tabN<CR>
@@ -334,6 +355,7 @@ nnoremap <leader>ev :vsp $MYVIMRC<CR>
 nnoremap <leader>ez :vsp ~/.zshrc<CR>
 nnoremap <leader>sv :source $MYVIMRC<CR>
 
+"" YCM
 nnoremap <leader>jd :YcmCompleter GoToDefinition<CR>
 nnoremap <leader>ju :YcmCompleter GoToCallers<CR>
 nnoremap <leader>jr :YcmCompleter GoToReferences<CR>
@@ -343,6 +365,17 @@ nnoremap <Leader>jj :lnext<CR>zz
 nnoremap <leader>jt :YcmCompleter GetType<CR>
 nnoremap <leader>jo :YcmCompleter GetDoc<CR>
 nnoremap <leader>jx :YcmCompleter FixIt<CR>
+
+"" fzf.vim
+nnoremap <C-p> :Files<CR>
+nnoremap <leader>f :Rg<Space>
+nnoremap <leader>b :Buffers<CR>
+
+"" disabled ones
+"nnoremap <C-k> <C-w>k
+"nnoremap <C-j> <C-w>j
+"nnoremap <C-h> <C-w>h
+"nnoremap <C-l> <C-w>l
 
 """"""""""""""
 "  nerdtree  "
@@ -371,7 +404,7 @@ autocmd VimEnter * NERDTree | if argc() > 0 || exists("s:std_in") | wincmd p | e
 
 " Start NERDTree when Vim is started without file arguments.
 "autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+"autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
 
 "
 " Exit Vim if NERDTree is the only window remaining in the only tab.
@@ -428,23 +461,67 @@ let g:NERDTreeChDirMode = 2
 
 let g:bottom_term_buf = -1
 
+"function! ToggleBottomTerminal()
+"  if bufexists(g:bottom_term_buf)
+"    if bufwinnr(g:bottom_term_buf) != -1
+"      execute bufwinnr(g:bottom_term_buf) . 'hide'
+"      return
+"    endif
+"
+"    belowright 14split
+"    execute 'buffer ' . g:bottom_term_buf
+"    call feedkeys("i")
+"    return
+"  endif
+"
+"  belowright 14split
+"  term ++curwin
+"  let g:bottom_term_buf = bufnr('%')
+"  "startinsert
+"endfunction
 function! ToggleBottomTerminal()
+  " Hide terminal if visible
   if bufexists(g:bottom_term_buf)
     if bufwinnr(g:bottom_term_buf) != -1
       execute bufwinnr(g:bottom_term_buf) . 'hide'
       return
     endif
 
-    belowright 14split
+    botright 14split
     execute 'buffer ' . g:bottom_term_buf
+    let l:termwin = win_getid()
+
+    for w in range(1, winnr('$'))
+        if getbufvar(winbufnr(w), '&filetype') == 'nerdtree'
+            execute w . 'wincmd w'
+            wincmd H
+            call SetNerdTreeWidth()
+            break
+        endif
+    endfor
+
+    call win_gotoid(l:termwin)
     call feedkeys("i")
+    startinsert
     return
   endif
 
-  belowright 14split
+  botright 14split
   term ++curwin
   let g:bottom_term_buf = bufnr('%')
-  "startinsert
+  let l:termwin = win_getid()
+
+  for w in range(1, winnr('$'))
+      if getbufvar(winbufnr(w), '&filetype') == 'nerdtree'
+          execute w . 'wincmd w'
+          wincmd H
+          call SetNerdTreeWidth()
+          break
+      endif
+  endfor
+
+  call win_gotoid(l:termwin)
+  startinsert
 endfunction
 
 nnoremap <leader>tt :call ToggleBottomTerminal()<CR>
