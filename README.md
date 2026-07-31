@@ -23,3 +23,9 @@ Mostly abandoned
 ## hyprland config
 
 Working barebones hyprland (<=0.54 config), requires elogind, swayidle, swaylock, hyprshot, alacritty (default, optional), thunar (optional), wofi, nm-applet, ashell, wpctl, playerctl, firefox(default)
+
+## hyprland lua config
+
+Working barebones hyprland (>=0.55 config), requires alacritty (default), dolphin (optional), xbacklight playerctl, firefox(default)
+
+Everything else has not been configured (even notifications). This config is stolen from the end_4 dotfiles
