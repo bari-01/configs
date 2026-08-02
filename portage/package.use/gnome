@@ -1,0 +1,25 @@
+#x11-libs/libxkbcommon X
+#media-libs/libglvnd X
+##x11-libs/gtk+ X
+#media-libs/libepoxy X
+##x11-libs/cairo X
+#media-video/ffmpeg X opus
+gnome-base/gnome-shell -X
+net-misc/gnome-remote-desktop -X
+net-misc/freerdp -X
+gnome-base/gdm -X
+gnome-base/gnome-session -X
+gnome-base/gnome-control-center -X
+gnome-base/gnome-session-openrc -X
+sys-apps/xdg-desktop-portal-gtk -X
+sys-apps/xdg-desktop-portal-gnome -X
+net-libs/gnome-online-accounts -gnome -ms365 -kerberos
+gnome-base/gnome-control-center -gnome-online-accounts
+gnome-extra/evolution-data-server -gnome-online-accounts
+gnome-base/gnome-settings-daemon -cups
+gnome-base/gnome-control-center -cups
+gnome-base/gnome-shell -ibus
+gnome-base/gnome-control-center -ibus
+app-misc/geoclue -vala
+gnome-base/gnome-control-center -geolocation
+net-misc/freerdp server wayland X openh264

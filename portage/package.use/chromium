@@ -1,0 +1,3 @@
+www-client/chromium bindist
+media-video/ffmpeg chromium
+media-video/ffmpeg abi_x86_32

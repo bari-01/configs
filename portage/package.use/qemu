@@ -1,0 +1,1 @@
+app-emulation/qemu aio curl doc fdt filecaps gnutls jpeg oss pin-upstream-blobs png seccomp slirp vhost-net vnc debug fuse gtk iscsi jemalloc lzo ncurses numa opengl pipewire plugins pulseaudio python sasl sdl spice ssh systemtap udev usb usbredir vde virgl virtfs vte wayland xattr xen zstd

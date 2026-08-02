@@ -1,0 +1,7 @@
+sys-apps/busybox static livecd mdev -pam
+>=virtual/libcrypt-2-r1 static-libs
+# required by virtual/libcrypt-2-r1::gentoo
+# required by sys-apps/busybox-1.36.1-r4::gentoo[static]
+# required by @selected
+# required by @world (argument)
+>=sys-libs/libxcrypt-4.4.38-r1 static-libs

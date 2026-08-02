@@ -1,0 +1,1 @@
+sys-boot/gnu-efi ext2 ext4 iso9660i btrfs doc -hfs ntfs -reiserfs secureboot

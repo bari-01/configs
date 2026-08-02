@@ -1,0 +1,132 @@
+app-emulation/wine-proton ffmpeg pulseaudio udev usb v4l wayland xinerama
+
+dev-lang/orc                        abi_x86_32
+media-libs/a52dec                   abi_x86_32
+media-libs/faad2                    abi_x86_32
+media-libs/graphene                 abi_x86_32
+media-libs/gst-plugins-bad          abi_x86_32
+media-libs/gst-plugins-base         abi_x86_32
+media-libs/gst-plugins-good         abi_x86_32
+media-libs/gst-plugins-ugly         abi_x86_32
+media-libs/gstreamer                abi_x86_32
+media-libs/libdca                   abi_x86_32
+media-libs/libmpeg2                 abi_x86_32
+media-libs/vulkan-loader            abi_x86_32
+media-libs/x264                     abi_x86_32
+media-plugins/gst-plugins-a52dec    abi_x86_32
+media-plugins/gst-plugins-dts       abi_x86_32
+media-plugins/gst-plugins-dvdread   abi_x86_32
+media-plugins/gst-plugins-faad      abi_x86_32
+media-plugins/gst-plugins-flac      abi_x86_32
+media-plugins/gst-plugins-meta      abi_x86_32
+media-plugins/gst-plugins-mpeg2dec  abi_x86_32
+media-plugins/gst-plugins-mpg123    abi_x86_32
+media-plugins/gst-plugins-pulse     abi_x86_32
+media-plugins/gst-plugins-x264      abi_x86_32
+sys-libs/libunwind                  abi_x86_32
+x11-libs/libXv                      abi_x86_32
+
+
+>=media-plugins/gst-plugins-libav-1.24.13 abi_x86_32
+# required by media-plugins/gst-plugins-libav-1.24.13::gentoo
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=media-video/ffmpeg-8.1 abi_x86_32
+# required by media-video/ffmpeg-8.1::gentoo[jpegxl]
+# required by media-plugins/gst-plugins-libav-1.24.13::gentoo
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=media-libs/libjxl-0.11.2 abi_x86_32
+# required by media-video/ffmpeg-8.1::gentoo[openh264]
+# required by media-plugins/gst-plugins-libav-1.24.13::gentoo
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=media-libs/openh264-2.6.0 abi_x86_32
+# required by media-video/ffmpeg-8.1::gentoo[x265]
+# required by media-plugins/gst-plugins-libav-1.24.13::gentoo
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=media-libs/x265-4.1 abi_x86_32
+# required by media-video/ffmpeg-8.1::gentoo[opencl]
+# required by media-plugins/gst-plugins-libav-1.24.13::gentoo
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=virtual/opencl-3-r5 abi_x86_32
+# required by virtual/opencl-3-r5::gentoo
+# required by media-video/ffmpeg-8.1::gentoo[opencl]
+# required by media-plugins/gst-plugins-libav-1.24.13::gentoo
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=dev-libs/opencl-icd-loader-2024.10.24 abi_x86_32
+
+>=media-libs/libv4l-1.32.0 abi_x86_32
+# required by media-plugins/gst-plugins-meta-1.24.13::gentoo[dvd]
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=media-plugins/gst-plugins-resindvd-1.24.13 abi_x86_32
+# required by media-plugins/gst-plugins-resindvd-1.24.13::gentoo
+# required by media-plugins/gst-plugins-meta-1.24.13::gentoo[dvd]
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=media-libs/libdvdnav-6.1.1 abi_x86_32
+# required by media-libs/libdvdnav-6.1.1::gentoo
+# required by media-video/ffmpeg-8.1::gentoo[dvd]
+# required by media-plugins/gst-plugins-libav-1.24.13::gentoo
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=media-libs/libdvdread-6.1.3 abi_x86_32
+# required by media-libs/libdvdread-6.1.3::gentoo[css]
+# required by media-video/ffmpeg-8.1::gentoo[dvd]
+# required by media-plugins/gst-plugins-libav-1.24.13::gentoo
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=media-libs/libdvdcss-1.4.3 abi_x86_32
+# required by media-video/ffmpeg-8.1::gentoo[dav1d]
+# required by media-plugins/gst-plugins-libav-1.24.13::gentoo
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=media-libs/dav1d-1.5.0 abi_x86_32
+# required by media-video/ffmpeg-8.1::gentoo[libass]
+# required by media-plugins/gst-plugins-libav-1.24.13::gentoo
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=media-libs/libass-0.17.4 abi_x86_32
+# required by media-video/ffmpeg-8.1::gentoo[vpx]
+# required by media-plugins/gst-plugins-libav-1.24.13::gentoo
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=media-libs/libvpx-1.16.0 abi_x86_32
+# required by media-video/ffmpeg-8.1::gentoo[vulkan]
+# required by media-plugins/gst-plugins-libav-1.24.13::gentoo
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=media-libs/shaderc-2026.1 abi_x86_32
+# required by media-libs/libjxl-0.11.2::gentoo
+# required by media-video/ffmpeg-8.1::gentoo[jpegxl]
+# required by media-plugins/gst-plugins-libav-1.24.13::gentoo
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=app-arch/brotli-1.1.0 abi_x86_32
+# required by media-libs/libjxl-0.11.2::gentoo
+# required by media-video/ffmpeg-8.1::gentoo[jpegxl]
+# required by media-plugins/gst-plugins-libav-1.24.13::gentoo
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=dev-cpp/highway-1.3.0 abi_x86_32
+# required by media-libs/libjxl-0.11.2::gentoo[gif]
+# required by media-video/ffmpeg-8.1::gentoo[jpegxl]
+# required by media-plugins/gst-plugins-libav-1.24.13::gentoo
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=media-libs/giflib-5.2.2 abi_x86_32
+# required by media-plugins/gst-plugins-meta-1.24.13::gentoo[cdda]
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=media-plugins/gst-plugins-cdparanoia-1.24.13 abi_x86_32
+# required by media-plugins/gst-plugins-cdparanoia-1.24.13::gentoo
+# required by media-plugins/gst-plugins-meta-1.24.13::gentoo[cdda]
+# required by app-emulation/wine-proton-10.0.4::gentoo[gstreamer]
+# required by app-emulation/wine-proton (argument)
+>=media-sound/cdparanoia-3.10.2-r8 abi_x86_32
+
+sys-libs/ncurses -gpm

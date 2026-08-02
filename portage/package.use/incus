@@ -1,0 +1,2 @@
+net-firewall/nftables json
+sys-libs/libcap static-libs

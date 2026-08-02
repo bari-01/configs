@@ -1,0 +1,4 @@
+x11-drivers/nvidia-drivers -dist-kernel -kernel-open modules-compress powerd persistenced
+*/* VIDEO_CARDS: nvidia
+*/* nvidia vdpau nvenc
+dev-util/nvidia-cuda-toolkit clang debugger sanitizer

@@ -1,0 +1,3 @@
+gui-apps/wayvnc ~amd64
+dev-libs/aml ~amd64
+gui-libs/neatvnc ~amd64

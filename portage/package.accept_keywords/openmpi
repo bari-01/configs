@@ -1,0 +1,3 @@
+sys-cluster/openmpi ~amd64
+sys-cluster/knem ~amd64
+sys-cluster/prrte ~amd64

@@ -1,0 +1,7 @@
+meda-gfx/blender alembic bullet cycles cycles-bin-kernels cuda doc embree manifold nanovdb experimental jemalloc jpeg2k man pipewire pulseaudio renderdoc sdl vulkan wayland
+media-libs/freetype brotli
+sci-physics/bullet double-precision
+sci-libs/fftw threads
+media-libs/opensubdiv tbb
+media-libs/libtheora abi_x86_32
+media-libs/xvid abi_x86_32

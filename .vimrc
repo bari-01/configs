@@ -143,7 +143,7 @@ function! VimFolds(lnum)
   endif
   if !s:two_following_lines
       return '='
-    endif
+  endif
   else
     if (match(s:thisline, '^"""""') >= 0) &&
        \ (match(s:line_1_after, '^"  ') >= 0) &&
@@ -182,6 +182,67 @@ augroup fold_vimrc
                    \ setlocal foldtext=VimFoldText() |
                    \ setlocal foldlevel=0
      "              \ set foldcolumn=2 foldminlines=2
+augroup END
+
+"""""""""""""""""""""""""""
+"  Autofolding lua files  "
+"""""""""""""""""""""""""""
+
+""" defines a foldlevel for each line of code
+function! LuaFolds(lnum)
+    let s:thisline = getline(a:lnum)
+    if match(s:thisline, '^\s*---- ') >= 0
+        return '>2'
+    endif
+    if match(s:thisline, '^\s*------ ') >= 0
+        return '>3'
+    endif
+    let s:two_following_lines = 0
+    if line(a:lnum) + 2 <= line('$')
+        let s:line_1_after = getline(a:lnum+1)
+        let s:line_2_after = getline(a:lnum+2)
+        let s:two_following_lines = 1
+    endif
+    if !s:two_following_lines
+        return '='
+    endif
+    else
+      if match(s:thisline, '^--------\+$') >= 0 &&
+         \ match(s:line_1_after, '^--.\+--\s*$') >= 0 &&
+         \ match(s:line_2_after, '^--------\+$') >= 0
+        return '>1'
+      else
+        return '='
+    endif
+  endif
+endfunction
+
+""" defines a foldtext
+function! LuaFoldText()
+    let s:info = '('.(v:foldend-v:foldstart).' l)'
+
+    if v:foldlevel == 1
+        let s:line = ' ◇ '..getline(v:foldstart+1)[3:-3]
+    elseif v:foldlevel == 2
+        let s:line = '   ● '.substitute(getline(v:foldstart), '^\s*----\s*', '', '')
+    elseif v:foldlevel == 3
+        let s:line = '     ▪ '.substitute(getline(v:foldstart), '^\s*------\s*', '', '')
+    endif
+    if strwidth(s:line) > 80 - len(s:info) - 3
+        return s:line[:79-len(s:info)-3+len(s:line)-strwidth(s:line)].'...'.s:info
+    else
+        return s:line.repeat(' ', 80-strwidth(s:line)-len(s:info)).s:info
+    endif
+endfunction
+
+""" set foldsettings automatically for lua files
+augroup fold_lua
+    autocmd!
+    autocmd FileType lua
+                \ setlocal foldmethod=expr |
+                \ setlocal foldexpr=LuaFolds(v:lnum) |
+                \ setlocal foldtext=LuaFoldText() |
+                \ setlocal foldlevel=0
 augroup END
 
 """""""""
@@ -332,6 +393,7 @@ set undodir=~/.vim-tmp/undo
 """"""""""""""
 "  mappings  "
 """"""""""""""
+"source ~/.config/vim/extras.vim
 let mapleader="\\"
 let maplocalleader=","
 
@@ -344,8 +406,7 @@ nnoremap <leader>p :call PasteImage()<CR>
 nmap <F8> :TagbarToggle<CR>
 nnoremap <F5> :UndotreeToggle<CR>
 
-" needed for c functions
-nnoremap s $i<CR><ESC>
+nnoremap s i<CR><ESC>
 
 "" tab management
 nnoremap <leader>t :tabnew<CR>
@@ -400,7 +461,7 @@ autocmd StdinReadPre * let s:std_in=1
 
 " Start NERDTree. If a file is specified, move the cursor to its window.
 "autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * NERDTree | if argc() > 0 || exists("s:std_in") | wincmd p | endif
+autocmd VimEnter * if !&diff | NERDTree | if argc() > 0 || exists("s:std_in") | wincmd p | endif
 
 " Start NERDTree when Vim is started without file arguments.
 "autocmd StdinReadPre * let s:std_in=1
@@ -458,7 +519,7 @@ let g:NERDTreeChDirMode = 2
 """""""""""""""""""""
 "  bottom terminal  "
 """""""""""""""""""""
-
+autocmd TerminalOpen * setlocal nonumber norelativenumber
 let g:bottom_term_buf = -1
 
 "function! ToggleBottomTerminal()
@@ -501,8 +562,8 @@ function! ToggleBottomTerminal()
     endfor
 
     call win_gotoid(l:termwin)
+    "startinsert
     call feedkeys("i")
-    startinsert
     return
   endif
 
@@ -521,7 +582,8 @@ function! ToggleBottomTerminal()
   endfor
 
   call win_gotoid(l:termwin)
-  startinsert
+  "startinsert
+  "call feedkeys("i")
 endfunction
 
 nnoremap <leader>tt :call ToggleBottomTerminal()<CR>
