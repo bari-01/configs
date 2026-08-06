@@ -120,12 +120,12 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("easyeffects --hide-window --service-mode")
 
     ------ Clipboard: history
-    --hl.exec_cmd("wl-paste --watch cliphist store")
+   hl.exec_cmd("wl-paste --watch cliphist store")
     --hl.exec_cmd("wl-paste --type text --watch bash -c 'cliphist store && qs -c $qsConfig ipc call cliphistService update'")
     --hl.exec_cmd("wl-paste --type image --watch bash -c 'cliphist store && qs -c $qsConfig ipc call cliphistService update'")
 
     ------ Cursor
-    --hl.exec_cmd("hyprctl setcursor Bibata-Modern-Classic 24")
+    hl.exec_cmd("hyprctl setcursor Bibata-Modern-Classic 24")
 end)
 
 ------------------------
@@ -779,13 +779,13 @@ hl.bind("SUPER + code:86", function() zoomfunction(0.3) end, { repeating = true 
 --     { locked = true, repeating = true })
 -- hl.bind("SUPER + F2", hl.dsp.exec_cmd(qsIpcCall .. " brightness decrement || brightnessctl s 5%-"),
 --     { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("xbrightness -inc 5"),
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("xbacklight -inc 5"),
     { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("xbrightness -inc 5"),
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("xbacklight -dec 5"),
     { locked = true, repeating = true })
-hl.bind("SUPER + F1", hl.dsp.exec_cmd("xbrightness -inc 5"),
+hl.bind("SUPER + F1", hl.dsp.exec_cmd("xbacklight -inc 5"),
     { locked = true, repeating = true })
-hl.bind("SUPER + F2", hl.dsp.exec_cmd("xbrightness -dec 5"),
+hl.bind("SUPER + F2", hl.dsp.exec_cmd("xbacklight -dec 5"),
     { locked = true, repeating = true })
 
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%+ -l 1.5"),
